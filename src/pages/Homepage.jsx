@@ -39,42 +39,6 @@ const Homepage = () => {
     <>
       <Header />
 
-      {/* {freeRideMod && (
-        <div className="w-full h-screen text-center p-4 flex justify-center items-center bg-black/90 fixed top-0 left-0 z-[999] scale">
-          <div className="w-full sm:w-[500px] h-fit bg-white px-5 pt-10 pb-5 border border-blue-400 rounded-lg relative">
-            <img
-              alt=""
-              src="/images/icons8-discount-50.png"
-              className="w-20 h-20 absolute top-[-40px] left-[50%] translate-x-[-50%]"
-            />
-            <h1 className="text-[1.4rem] font-bold mb-3">Get free rides!</h1>
-            <div>
-              Limited time offer: Free rides today for first 50 users! Book now!
-            </div>
-            <div className="flex justify-center gap-3 mt-4">
-              <button
-                onClick={cancelFreeRideMod}
-                className="h-fit text-sm text-blue-500 text-[.75rem] bg-blue-500/20 px-8 py-1 md:py-2 uppercase hover:bg-blue-400 hover:text-white border-blue-500 border-2 rounded-md transition-all duration-300"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={bookFreeRide}
-                className="h-fit text-sm text-white text-[.75rem] bg-blue-500 px-6 py-1 md:py-2 uppercase hover:bg-blue-400 border-blue-500 border-2 rounded-md transition-all duration-300"
-              >
-                Book now
-              </button>
-            </div>
-            {/* <button
-              onClick={bookFreeRide}
-              className="text-sm text-white text-[.85rem] bg-blue-500 px-10 py-2 mt-8 uppercase hover:bg-blue-400 border-blue-500 border-2 rounded-md transition-all duration-300"
-            >
-              Book now
-            </button>
-          </div>
-        </div>
-      )} */}
-
       <main className="w-full bg-slate-200">
         <section className="w-full h-[fit-content] sm:min-h-[105vh] bg-unilorin bg-cover bg-bottom lg:bg-bottom bg-no-repeat relative">
           <div className="overlay w-full h-[fit-content] sm:min-h-[105vh] bg-black/30 block md:flex text-white px-[5%] sm:px-[10.5%] pt-[130px] md:pt-[200px] lg:pt-[15%] pb-40">
@@ -91,11 +55,11 @@ const Homepage = () => {
             <div className="first-section-text mr-auto">
               <p className="text-[0.95rem] tracking-widest">AVOID THE RUSH</p>
               <h1 className="text-[2rem] font-bold uppercase md:text-[2.5rem] lg:text-[3.5rem]">
-                Beat The Queue!!
+                THE 1GO EXPERIENCE
               </h1>
               <div className="pb-3 font-medium text-[0.95rem] md:text-[1.23rem] uppercase">
-                <p>Get easy rides for as low as -- NGN 50</p>
-                <p>From terminus to school park and vice versa</p>
+                <p> Experience a new class of ride</p>
+                <p>When moving in and out of the University of Ilorin</p>
               </div>
               <button
                 onClick={accessDashboard}

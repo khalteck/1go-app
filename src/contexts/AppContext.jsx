@@ -504,32 +504,56 @@ const AppContextProvider = ({ children }) => {
 
   //to handle booking time form data submit to firebase
   const [fieldsRequired, setFieldsRequired] = useState("");
-  const handleMorningBookingTimeSubmit = async (e) => {
-    e.preventDefault();
-    if (
-      morningForm.morningHour &&
-      morningForm.morningMinute &&
-      morningForm.morningAmpm &&
-      morningForm.slots &&
-      morningForm.price
-    ) {
-      let morningTime = `${morningForm.morningHour}:${morningForm.morningMinute} ${morningForm.morningAmpm}`;
-      setLoader(true);
+  // const handleMorningBookingTimeSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (
+  //     morningForm.morningHour &&
+  //     morningForm.morningMinute &&
+  //     morningForm.morningAmpm &&
+  //     morningForm.slots &&
+  //     morningForm.price
+  //   ) {
+  //     let morningTime = `${morningForm.morningHour}:${morningForm.morningMinute} ${morningForm.morningAmpm}`;
+  //     setLoader(true);
 
-      try {
-        await createMorningBookingTimeDocument(
-          morningTime,
-          formattedDate,
-          morningForm.slots,
-          morningForm.price
-        );
-        setLoader(false);
-      } catch (error) {
-        setLoader(false);
-        console.log(error.message);
-      }
-    } else {
-      setFieldsRequired("Please fill all fields!");
+  //     try {
+  //       await createMorningBookingTimeDocument(
+  //         morningTime,
+  //         formattedDate,
+  //         morningForm.slots,
+  //         morningForm.price
+  //       );
+  //       setLoader(false);
+  //     } catch (error) {
+  //       setLoader(false);
+  //       console.log(error.message);
+  //     }
+  //   } else {
+  //     setFieldsRequired("Please fill all fields!");
+  //   }
+  // };
+
+  const [openMorningEdit, setOpenMorningEdit] = useState(false);
+
+  const handleMorningBookingTimeSubmit = async () => {
+    setLoader(true);
+    let morningTime = `${morningForm.morningHour}:${morningForm.morningMinute} ${morningForm.morningAmpm}`;
+    const data = {
+      slot: Number(morningForm?.slots),
+      price: morningForm?.price,
+      time: morningTime,
+    };
+    console.log("data", data);
+    try {
+      const endpointURL =
+        "https://onegoexploreapp.onrender.com/api/admin/add-to-campus";
+      const response = await axios.post(endpointURL, data);
+      console.log("To campus booking time added!", response.data);
+      setOpenMorningEdit(false);
+    } catch (error) {
+      console.error("Error adding to campus booking time", error);
+    } finally {
+      setLoader(false);
     }
   };
 
@@ -616,36 +640,60 @@ const AppContextProvider = ({ children }) => {
   };
 
   //to handle booking time form data submit to firebase
-  const handleNoonBookingTimeSubmit = async (e) => {
-    e.preventDefault();
+  // const handleNoonBookingTimeSubmit = async (e) => {
+  //   e.preventDefault();
 
-    if (
-      noonForm.noonHour &&
-      noonForm.noonMinute &&
-      noonForm.noonAmpm &&
-      noonForm.slots &&
-      noonForm.price
-    ) {
-      let noonTime = `${noonForm.noonHour}:${noonForm.noonMinute} ${noonForm.noonAmpm}`;
-      setLoader(true);
+  //   if (
+  //     noonForm.noonHour &&
+  //     noonForm.noonMinute &&
+  //     noonForm.noonAmpm &&
+  //     noonForm.slots &&
+  //     noonForm.price
+  //   ) {
+  //     let noonTime = `${noonForm.noonHour}:${noonForm.noonMinute} ${noonForm.noonAmpm}`;
+  //     setLoader(true);
 
-      try {
-        await createNoonBookingTimeDocument(
-          noonTime,
-          formattedDate,
-          noonForm.slots,
-          noonForm.price
-        );
-        await getNoonBookingTime();
-        added = false;
-        setLoader(false);
-        window.location.reload();
-      } catch (error) {
-        setLoader(false);
-        console.log(error.message);
-      }
-    } else {
-      setFieldsRequired("Please fill all fields!");
+  //     try {
+  //       await createNoonBookingTimeDocument(
+  //         noonTime,
+  //         formattedDate,
+  //         noonForm.slots,
+  //         noonForm.price
+  //       );
+  //       await getNoonBookingTime();
+  //       added = false;
+  //       setLoader(false);
+  //       window.location.reload();
+  //     } catch (error) {
+  //       setLoader(false);
+  //       console.log(error.message);
+  //     }
+  //   } else {
+  //     setFieldsRequired("Please fill all fields!");
+  //   }
+  // };
+
+  const [openNoonEdit, setOpenNoonEdit] = useState(false);
+
+  const handleNoonBookingTimeSubmit = async () => {
+    setLoader(true);
+    let noonTime = `${noonForm.noonHour}:${noonForm.noonMinute} ${noonForm.noonAmpm}`;
+    const data = {
+      slot: Number(noonForm?.slots),
+      price: noonForm?.price,
+      time: noonTime,
+    };
+    console.log("data", data);
+    try {
+      const endpointURL =
+        "https://onegoexploreapp.onrender.com/api/admin/add-off-campus";
+      const response = await axios.post(endpointURL, data);
+      console.log("Off campus booking time added!", response.data);
+      setOpenNoonEdit(false);
+    } catch (error) {
+      console.error("Error adding off campus booking time", error);
+    } finally {
+      setLoader(false);
     }
   };
 
@@ -898,6 +946,7 @@ const AppContextProvider = ({ children }) => {
 
   //to save noon time form input
   function handleAdminChange(event) {
+    setErrorMessage("");
     const { id, value } = event.target;
     setAdminLoginData((prevState) => {
       return {
@@ -915,35 +964,56 @@ const AppContextProvider = ({ children }) => {
     setAdmin(JSON.parse(localStorage.getItem("admin")));
   }, [trackAdmin]);
 
-  const loginAdmin = async (e) => {
-    e.preventDefault();
+  // const loginAdmin = async (e) => {
+  //   e.preventDefault();
+  //   setLoader(true);
+
+  //   try {
+  //     const docRef = doc(db, "users", "admin1cx@gmail.com");
+  //     const docSnap = await getDoc(docRef);
+  //     let adminData = docSnap.data();
+  //     console.log("adminData", adminData);
+
+  //     if (
+  //       adminLoginData.email === adminData.email &&
+  //       adminLoginData.password === adminData.lastname
+  //     ) {
+  //       localStorage.setItem("admin", JSON.stringify(adminData));
+  //       setAdmin(adminData);
+  //       navigate("/admin");
+  //       setTrackAdmin((prev) => !prev);
+  //     } else if (
+  //       adminLoginData.email === "" ||
+  //       adminLoginData.password === ""
+  //     ) {
+  //       setErrorMessage("email & password required!");
+  //     } else {
+  //       setErrorMessage("Invalid admin details");
+  //     }
+  //   } catch (err) {
+  //     err.message === "Failed to get document because the client is offline." &&
+  //       setErrorMessage("Bad network connection");
+  //   } finally {
+  //     setLoader(false);
+  //   }
+  // };
+
+  const loginAdmin = async () => {
     setLoader(true);
+    console.log("adminLoginData", adminLoginData);
 
     try {
-      const docRef = doc(db, "users", "admin1cx@gmail.com");
-      const docSnap = await getDoc(docRef);
-      let adminData = docSnap.data();
-      console.log("adminData", adminData);
-
-      if (
-        adminLoginData.email === adminData.email &&
-        adminLoginData.password === adminData.lastname
-      ) {
-        localStorage.setItem("admin", JSON.stringify(adminData));
-        setAdmin(adminData);
-        navigate("/admin");
-        setTrackAdmin((prev) => !prev);
-      } else if (
-        adminLoginData.email === "" ||
-        adminLoginData.password === ""
-      ) {
-        setErrorMessage("email & password required!");
-      } else {
-        setErrorMessage("Invalid admin details");
-      }
-    } catch (err) {
-      err.message === "Failed to get document because the client is offline." &&
-        setErrorMessage("Bad network connection");
+      const endpointURL =
+        "https://onegoexploreapp.onrender.com/api/admin/login";
+      const response = await axios.post(endpointURL, adminLoginData);
+      console.log("Login successful!", response.data);
+      localStorage.setItem("admin", JSON.stringify(response.data));
+      setAdmin(response.data);
+      navigate("/admin");
+      setTrackAdmin((prev) => !prev);
+    } catch (error) {
+      console.error("Login failed!", error);
+      setErrorMessage("An error occured: Invalid Credentials");
     } finally {
       setLoader(false);
     }
@@ -1372,6 +1442,13 @@ const AppContextProvider = ({ children }) => {
         fieldsRequired,
         // freeRideCount,
         userDetails,
+        adminLoginData,
+        setErrorMessage,
+        setFieldsRequired,
+        openMorningEdit,
+        setOpenMorningEdit,
+        openNoonEdit,
+        setOpenNoonEdit,
       }}
     >
       {children}

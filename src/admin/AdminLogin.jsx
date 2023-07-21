@@ -11,7 +11,18 @@ const AdminLogin = () => {
     loginAdmin,
     loader,
     handleAdminChange,
+    adminLoginData,
+    setErrorMessage,
   } = useAppContext();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    if (adminLoginData?.email && adminLoginData?.password) {
+      await loginAdmin();
+    } else {
+      setErrorMessage("Email & password required!");
+    }
+  };
   return (
     <div className="w-full">
       {loader && <Loader />}
@@ -74,7 +85,7 @@ const AdminLogin = () => {
           </div>
           <div>
             <button
-              onClick={loginAdmin}
+              onClick={handleLogin}
               className="text-white bg-blue-500 login-input mb-3 border-transparent hover:opacity-80"
             >
               Sign in

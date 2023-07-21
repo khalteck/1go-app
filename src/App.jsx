@@ -4,11 +4,7 @@ import Homepage from "./pages/Homepage";
 import { useAppContext } from "./contexts/AppContext";
 import { lazy, Suspense } from "react";
 import Loader from "./components/Loader";
-import Maintenance from "./pages/Maintenance";
-
-// const Homepage = lazy(() => {
-//   import("./pages/Homepage");
-// });
+// import Maintenance from "./pages/Maintenance";
 const About = lazy(() => import("./pages/About"));
 const BookRides = lazy(() => import("./pages/BookRides"));
 const Login = lazy(() => import("./pages/Login"));
@@ -29,13 +25,6 @@ function App() {
     <Suspense fallback={<Loader />}>
       <Routes>
         <Route path="/" element={<Homepage />} />
-        {/* <Route path="/" element={<Maintenance />} />
-
-        <Route path="/about" element={<Maintenance />} />
-        <Route path="/contact" element={<Maintenance />} />
-        <Route path="/login" element={<Maintenance />} />
-        <Route path="/register" element={<Maintenance />} /> */}
-
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
@@ -44,11 +33,6 @@ function App() {
         {/* dashboard controlled access */}
         {userDetails?.auth_token ? (
           <>
-            {/* <Route path="/book-ride" element={<Maintenance />} />
-            <Route path="/book-ride/summary/:id" element={<Maintenance />} />
-            <Route path="/booking-success" element={<Maintenance />} />
-            <Route path="/ride-history/:id" element={<Maintenance />} /> */}
-
             <Route path="/book-ride" element={<BookRides />} />
             <Route path="/book-ride/summary/:id" element={<Summary />} />
             <Route path="/booking-success" element={<BookingSuccess />} />
