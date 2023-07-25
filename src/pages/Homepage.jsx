@@ -10,27 +10,26 @@ import ClientMorningTimeBtn from "../components/ClientMorningTimeBtn";
 import ClientNoonTimeBtn from "../components/ClientNoonTimeBtn";
 import Loader from "../components/Loader";
 import moment from "moment";
+import { useEffect } from "react";
 
 const Homepage = () => {
-  const {
-    accessDashboard,
-    morningBookingTimesFromDb,
-    noonBookingTimesFromDb,
-    formattedDate,
-    freeRideMod,
-    bookFreeRide,
-    cancelBookFreeRide,
-    freeRideBanner,
-    cancelFreeRideMod,
-  } = useAppContext();
+  const { accessDashboard, formattedDate, allBookingTimes, fetchBookingTimes } =
+    useAppContext();
 
-  let sortedArrMorn = morningBookingTimesFromDb.slice().sort((a, b) => {
+  useEffect(() => {
+    fetchBookingTimes();
+  }, []);
+
+  const toCampusTimes = allBookingTimes?.to_campus;
+  const offCampusTimes = allBookingTimes?.off_campus;
+
+  let sortedToCampus = toCampusTimes?.slice()?.sort((a, b) => {
     const timeA = moment(a.time, ["h:mm A"]).format("HH:mm");
     const timeB = moment(b.time, ["h:mm A"]).format("HH:mm");
     return Number(timeA.replace(/:/g, "")) - Number(timeB.replace(/:/g, ""));
   });
 
-  let sortedArrNoon = noonBookingTimesFromDb.slice().sort((a, b) => {
+  let sortedOffCampus = offCampusTimes?.slice()?.sort((a, b) => {
     const timeA = moment(a.time, ["h:mm A"]).format("HH:mm");
     const timeB = moment(b.time, ["h:mm A"]).format("HH:mm");
     return Number(timeA.replace(/:/g, "")) - Number(timeB.replace(/:/g, ""));
@@ -93,13 +92,13 @@ const Homepage = () => {
                     From Outside school - Going to school park
                   </h2>
                   <div className="my-4 w-full flex gap-3 md:gap-4 flex-wrap">
-                    {morningBookingTimesFromDb?.length > 0 ? (
-                      sortedArrMorn?.map((item, index) => {
+                    {sortedToCampus?.length > 0 ? (
+                      sortedToCampus?.map((item, index) => {
                         return <ClientMorningTimeBtn key={index} item={item} />;
                       })
                     ) : (
                       <>
-                        <p>No booking times yet</p>
+                        <p className="text-black/50">No booking times yet</p>
                         <div className="w-[35px] h-[35px] bg-gradient-to-b from-blue-500 to-white rounded-full relative rotate mx-auto">
                           {/* <div className="w-1/3 h-full bg-white"></div> */}
                           <div className="w-1/2 h-1/2 bg-white rounded-full absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]"></div>
@@ -115,13 +114,13 @@ const Homepage = () => {
                     From Inside school - Going off-campus
                   </h2>
                   <div className="my-4 w-full flex gap-3 md:gap-4 flex-wrap">
-                    {noonBookingTimesFromDb?.length > 0 ? (
-                      sortedArrNoon?.map((item, index) => {
+                    {sortedOffCampus?.length > 0 ? (
+                      sortedOffCampus?.map((item, index) => {
                         return <ClientNoonTimeBtn key={index} item={item} />;
                       })
                     ) : (
                       <>
-                        <p>No booking times yet</p>
+                        <p className="text-black/50">No booking times yet</p>
                         <div className="w-[35px] h-[35px] bg-gradient-to-b from-blue-500 to-white rounded-full relative rotate mx-auto">
                           {/* <div className="w-1/3 h-full bg-white"></div> */}
                           <div className="w-1/2 h-1/2 bg-white rounded-full absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]"></div>
@@ -178,40 +177,6 @@ const Homepage = () => {
       </main>
       <Footer />
       <ScrollToTop />
-      {/* {freeRideBanner && (
-        <div className="w-full bg-white px-2 md:px-5 py-[6px] md:py-3 fixed bottom-0 left-0 flex items-center z-10">
-          <div className="flex items-center gap-2 md:gap-4 mr-auto">
-            <img
-              alt=""
-              src="/images/icons8-discount-50.png"
-              className="w-8 h-8 md:w-12 md:h-12"
-            />
-            <p className="text-[.75rem] md:text-[1rem]">
-              Limited time offer: Free rides today for first 50 users! Book now!
-            </p>
-          </div>
-          <div
-            onClick={cancelBookFreeRide}
-            className="w-8 h-7 bg-white flex items-center justify-center rounded-full border border-blue-500 cursor-pointer"
-          >
-            <img alt="" src="/images/icons8-close-30.png" className="w-3 h-3" />
-          </div>
-          {/* <div className="md:flex gap-3 hidden">
-            <button
-              onClick={cancelBookFreeRide}
-              className="h-fit text-sm text-blue-500 text-[.75rem] bg-blue-500/20 px-6 py-1 md:py-2 uppercase hover:bg-blue-400 hover:text-white border-blue-500 border-2 rounded-md transition-all duration-300"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={bookFreeRide}
-              className="h-fit text-sm text-white text-[.75rem] bg-blue-500 px-6 py-1 md:py-2 uppercase hover:bg-blue-400 border-blue-500 border-2 rounded-md transition-all duration-300"
-            >
-              Book now
-            </button>
-          </div>
-        </div>
-      )} */}
     </>
   );
 };

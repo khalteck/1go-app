@@ -6,6 +6,7 @@ import Loader from "../components/Loader";
 import AdminMorningBookingTimeBtn from "./AdminMorningBookingTimeBtn";
 import AdminNoonBookingTimeBtn from "./AdminNoonBookingTimeBtn";
 import moment from "moment";
+import { useEffect } from "react";
 // import { useAdminContext } from "../contexts/AdminContext";
 
 const BookingTimes = () => {
@@ -19,7 +20,7 @@ const BookingTimes = () => {
     morningBookingTimesFromDb,
     handleNoonBookingTimeSubmit,
     noonBookingTimesFromDb,
-    handleDeleteMorningTime,
+    deleteBookingTime,
     handleDeleteNoonTime,
     setOpenMorningEdit,
     openMorningEdit,
@@ -27,7 +28,16 @@ const BookingTimes = () => {
     setFieldsRequired,
     openNoonEdit,
     setOpenNoonEdit,
+    allBookingTimes,
+    fetchBookingTimes,
   } = useAppContext();
+
+  useEffect(() => {
+    fetchBookingTimes();
+  }, []);
+
+  const toCampusTimes = allBookingTimes?.to_campus;
+  const offCampusTimes = allBookingTimes?.off_campus;
 
   //to open morning edit time modal
   function handleMorningEdit() {
@@ -39,19 +49,13 @@ const BookingTimes = () => {
     setOpenNoonEdit((prev) => !prev);
   }
 
-  //to open price edit time modal
-  const [openPriceEdit, setOpenPriceEdit] = useState(false);
-  function handlePriceEdit() {
-    setOpenPriceEdit((prev) => !prev);
-  }
-
-  let sortedArrMorn = morningBookingTimesFromDb.slice().sort((a, b) => {
+  let sortedToCampus = toCampusTimes?.slice()?.sort((a, b) => {
     const timeA = moment(a.time, ["h:mm A"]).format("HH:mm");
     const timeB = moment(b.time, ["h:mm A"]).format("HH:mm");
     return Number(timeA.replace(/:/g, "")) - Number(timeB.replace(/:/g, ""));
   });
 
-  let sortedArrNoon = noonBookingTimesFromDb.slice().sort((a, b) => {
+  let sortedOffCampus = offCampusTimes?.slice()?.sort((a, b) => {
     const timeA = moment(a.time, ["h:mm A"]).format("HH:mm");
     const timeB = moment(b.time, ["h:mm A"]).format("HH:mm");
     return Number(timeA.replace(/:/g, "")) - Number(timeB.replace(/:/g, ""));
@@ -87,6 +91,15 @@ const BookingTimes = () => {
     }
   }
 
+  function getFormattedDate() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  }
+
   return (
     <div className="w-full">
       {loader && <Loader />}
@@ -101,13 +114,14 @@ const BookingTimes = () => {
             <strong>( From Outside school - Going to school park)</strong>
           </h2>
           <div className="my-4 w-full flex gap-4 flex-wrap">
-            {morningBookingTimesFromDb &&
-              sortedArrMorn?.map((item, index) => {
+            {toCampusTimes &&
+              sortedToCampus?.map((item, index) => {
                 return (
                   <AdminMorningBookingTimeBtn
                     key={index}
                     item={item}
-                    handleDeleteMorningTime={handleDeleteMorningTime}
+                    deleteBookingTime={deleteBookingTime}
+                    getFormattedDate={getFormattedDate}
                   />
                 );
               })}
@@ -223,13 +237,14 @@ const BookingTimes = () => {
             <strong>( From Inside school - Going off-campus )</strong>
           </h2>
           <div className="my-4 w-full flex gap-4 flex-wrap">
-            {noonBookingTimesFromDb &&
-              sortedArrNoon?.map((item, index) => {
+            {offCampusTimes &&
+              sortedOffCampus?.map((item, index) => {
                 return (
                   <AdminNoonBookingTimeBtn
                     key={index}
                     item={item}
-                    handleDeleteNoonTime={handleDeleteNoonTime}
+                    deleteBookingTime={deleteBookingTime}
+                    getFormattedDate={getFormattedDate}
                   />
                 );
               })}

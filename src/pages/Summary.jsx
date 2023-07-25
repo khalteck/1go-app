@@ -16,13 +16,14 @@ import { db } from "../firebase/firebase-config";
 import { useState } from "react";
 import Loader from "../components/Loader";
 import BookSuccessModal from "../components/BookSuccessModal";
+import { useEffect } from "react";
 
 const Summary = () => {
   const {
-    morningBookingTimesFromDb,
-    noonBookingTimesFromDb,
+    // morningBookingTimesFromDb,
+    // noonBookingTimesFromDb,
     loader,
-    currentUserFromDb,
+    userDetails,
     setActiveRideChange,
     setBookingSuccess,
     navigate,
@@ -35,14 +36,29 @@ const Summary = () => {
     cancelBookFreeRide,
     bookFreeRide,
     bookingSuccess,
+    allBookingTimes,
+    fetchBookingTimes,
+    verifyPayment,
     // freeRideCount,
   } = useAppContext();
 
-  let allTimes = [...morningBookingTimesFromDb, ...noonBookingTimesFromDb];
+  useEffect(() => {
+    fetchBookingTimes();
+  }, []);
 
-  const { id } = useParams();
-  const eachTime = allTimes.filter((item) => item.id === id)[0];
-  // console.log(eachTime);
+  const toCampusTimes = allBookingTimes?.to_campus || [];
+  const offCampusTimes = allBookingTimes?.off_campus || [];
+
+  const [allTimes, setAllTimes] = useState([]);
+  useEffect(() => {
+    if (toCampusTimes || offCampusTimes) {
+      setAllTimes([...toCampusTimes, ...offCampusTimes]);
+    }
+  }, [allBookingTimes]);
+
+  const { _id } = useParams();
+  const currentTime = allTimes?.filter((item) => item._id === _id)[0];
+  // console.log(currentTime);
 
   //to control details form
   const [detailsError, setDetailsError] = useState("");
@@ -61,56 +77,16 @@ const Summary = () => {
     });
   }
 
-  //to update slots   //to update slots   //to update slots
-  //to update slots   //to update slots   //to update slots
-  const morningTimeRef = morningBookingTimesFromDb?.filter(
-    (item) => item.time === eachTime.time
-  )[0];
-  const noonTimeRef = noonBookingTimesFromDb?.filter(
-    (item) => item.time === eachTime.time
-  )[0];
-
-  //to reduce slot count by 1
-  async function updateSlotsCount() {
-    setLoader(true);
-    try {
-      if (morningTimeRef) {
-        const timeQuery = doc(
-          db,
-          "morningBookingTimes",
-          `${morningTimeRef.id}`
-        );
-        const docSnap = await getDoc(timeQuery);
-        let timeData = docSnap.data();
-        await updateDoc(timeQuery, {
-          slots: Number(timeData?.slots) - Number(detailsForm?.seats),
-        });
-      }
-      if (noonTimeRef) {
-        const timeQuery = doc(db, "noonBookingTimes", `${noonTimeRef.id}`);
-        const docSnap = await getDoc(timeQuery);
-        let timeData = docSnap.data();
-        await updateDoc(timeQuery, {
-          slots: Number(timeData?.slots) - Number(detailsForm?.seats),
-        });
-      }
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoader(false);
-    }
-  }
-
   // paystack integration
   const paystackConfig = {
     reference: new Date().getTime().toString(),
-    email: `${currentUserFromDb?.email}`, //their mail
+    email: `${userDetails?.email}`, //their mail
     amount: `${
       detailsForm?.seats
-        ? eachTime?.price * detailsForm?.seats
-        : eachTime?.price
+        ? currentTime?.price * detailsForm?.seats
+        : currentTime?.price
     }00`, //amount is in Kobo
-    publicKey: "pk_live_4ec101f882797185958e8fd5ef0fb5e3907622b1", //pk_test_e56146887f0492a4016277927d6b67d19843cb32 //pk_live_4ec101f882797185958e8fd5ef0fb5e3907622b1
+    publicKey: "pk_test_e56146887f0492a4016277927d6b67d19843cb32", //pk_test_e56146887f0492a4016277927d6b67d19843cb32 //pk_live_4ec101f882797185958e8fd5ef0fb5e3907622b1
   };
 
   //to init paystack
@@ -118,39 +94,28 @@ const Summary = () => {
 
   //paystack functions
   const onSuccess = (transaction) => {
-    console.log(transaction);
+    console.log("transaction", transaction);
     setLoader(true);
-    setActiveRideChange((prev) => !prev);
-    createRideDoc(
-      currentUserFromDb.email,
-      eachTime.time,
-      eachTime.price,
-      transaction.reference,
-      formattedDate,
-      detailsForm.terminal,
-      detailsForm.seats
-    );
-    updateSlotsCount();
-    // navigate("/book-ride");
+
+    const data = {
+      price: `${detailsForm?.seats}`
+        ? currentTime?.price * detailsForm?.seats
+        : currentTime?.price,
+      time: currentTime?.time,
+      terminal: detailsForm?.terminal,
+      slot: Number(detailsForm?.seats),
+      payment_ref: {
+        reference: transaction?.reference,
+        message: transaction?.message,
+        status: transaction?.status,
+      },
+    };
+
+    verifyPayment(data);
+    navigate("/book-ride");
   };
   const onClose = () => {
     alert("Transaction was not completed, window closed.");
-  };
-
-  const freeRideSucceed = (free) => {
-    setLoader(true);
-    setActiveRideChange((prev) => !prev);
-    createRideDoc(
-      currentUserFromDb.email,
-      eachTime.time,
-      eachTime.price,
-      free,
-      formattedDate,
-      detailsForm.terminal,
-      detailsForm.seats
-    );
-    updateSlotsCount();
-    // navigate("/book-ride");
   };
 
   const PaystackHook = () => {
@@ -178,9 +143,6 @@ const Summary = () => {
     setSummaryPage(false);
   }
 
-  // console.log(Number(detailsForm.seats));
-  // console.log(Number(eachTime?.slots));
-
   //to proceed to summary
 
   function proceedToSummary(e) {
@@ -188,12 +150,12 @@ const Summary = () => {
     if (
       detailsForm.terminal &&
       detailsForm.seats &&
-      detailsForm.seats <= eachTime.slots
+      detailsForm.seats <= currentTime?.slot
     ) {
       gotoSummary();
     } else if (!detailsForm.terminal || !detailsForm.seats) {
       setDetailsError("Please fill all fields");
-    } else if (Number(detailsForm?.seats) > Number(eachTime?.slots)) {
+    } else if (Number(detailsForm?.seats) > Number(currentTime?.slot)) {
       setDetailsError("Number of seats cannot be more than available seats");
     } else {
       gotoSummary();
@@ -203,9 +165,6 @@ const Summary = () => {
     <>
       <Header />
       {loader && <Loader />}
-      {/* {bookingSuccess && (
-        <BookSuccessModal eachTime={eachTime} detailsForm={detailsForm} />
-      )} */}
 
       <section className="w-full min-h-screen py-40 bg-gradient-to-b from-zinc-500/70 to-blue-400/10 text-slate-700">
         <div className="absolute top-0 md:top-1 left-4 md:left-[10.5%] text-[0.9rem] text-slate-200 flex gap-2 items-center">
@@ -217,11 +176,6 @@ const Summary = () => {
           <p className="underline">Contact us</p>
         </div>
         <div className="w-full px-[5%] sm:px-[10.5%]">
-          {/* <Link onClick={() => window.location.reload()} to="/book-ride">
-            <div className="w-[fit-content] text-[0.75rem] text-slate-700 py-1 px-4 mb-16 bg-white rounded-md">
-              Back to dashboard
-            </div>
-          </Link> */}
           <div className="flex">
             <h2
               onClick={gotoDetails}
@@ -251,7 +205,7 @@ const Summary = () => {
                     className="w-6 h-6 mr-1"
                   />
                   <p>
-                    Time: <strong>{eachTime?.time}</strong>
+                    Time: <strong>{currentTime?.time}</strong>
                   </p>
                 </div>
                 <div className="flex items-center px-2 py-1 md:p-2 border-2 border-blue-400/50 rounded-md md:mr-4">
@@ -276,8 +230,8 @@ const Summary = () => {
                     <strong>
                       NGN{" "}
                       {detailsForm?.seats
-                        ? eachTime?.price * detailsForm?.seats
-                        : eachTime?.price}
+                        ? currentTime?.price * detailsForm?.seats
+                        : currentTime?.price}
                     </strong>
                   </p>
                   {/* // ) : (
@@ -300,7 +254,7 @@ const Summary = () => {
                     />
                     <p>Time: </p>
                   </div>
-                  <p className="font-bold">{eachTime?.time}</p>
+                  <p className="font-bold">{currentTime?.time}</p>
                 </div>
                 <div className="w-full flex items-center px-2 py-1 mb-2 md:p-2 border-2 border-blue-400/50 rounded-md md:mr-4">
                   <div className="mr-auto flex items-center">
@@ -325,23 +279,10 @@ const Summary = () => {
                   <p className="font-bold">
                     NGN
                     {detailsForm?.seats
-                      ? eachTime?.price * detailsForm?.seats
-                      : eachTime?.price}
+                      ? currentTime?.price * detailsForm?.seats
+                      : currentTime?.price}
                   </p>
                 </div>
-                {/* // ) : (
-                //   <div className="w-full flex items-center px-2 py-1 mb-2 md:p-2 border-2 border-blue-400/50 rounded-md md:mr-4">
-                //     <div className="mr-auto flex items-center">
-                //       <img
-                //         alt=""
-                //         src="/images/icons8-cost-58.png"
-                //         className="w-6 h-6 mr-1"
-                //       />
-                //       <p>Price: </p>
-                //     </div>
-                //     <p className="font-bold text-green-500">FREE</p>
-                //   </div>
-                // )} */}
               </div>
 
               <form className="max-w-[400px]">
@@ -359,7 +300,7 @@ const Summary = () => {
                   <option value="DEFAULT" disabled hidden>
                     Select terminal
                   </option>
-                  {eachTime.from === "inside" ? (
+                  {currentTime?.from === "inside" ? (
                     <option value="School park">School park</option>
                   ) : (
                     <>
@@ -379,7 +320,7 @@ const Summary = () => {
                 <br />
                 <p className="text-[.8rem] text-blue-400">
                   Number of available seats:{" "}
-                  <span className="font-bold">{eachTime.slots}</span>
+                  <span className="font-bold">{currentTime?.slot}</span>
                 </p>
                 <input
                   id="seats"
@@ -416,7 +357,7 @@ const Summary = () => {
                     className="w-6 h-6 mr-1"
                   />
                   <p>
-                    Time: <strong>{eachTime?.time}</strong>
+                    Time: <strong>{currentTime?.time}</strong>
                   </p>
                 </div>
                 <div className="flex items-center px-2 py-1 md:p-2 border-2 border-blue-400/50 rounded-md md:mr-4">
@@ -441,8 +382,8 @@ const Summary = () => {
                     <strong>
                       NGN{" "}
                       {detailsForm?.seats
-                        ? eachTime?.price * detailsForm?.seats
-                        : eachTime?.price}
+                        ? currentTime?.price * detailsForm?.seats
+                        : currentTime?.price}
                     </strong>
                   </p>
                   {/* // ) : (
@@ -465,7 +406,7 @@ const Summary = () => {
                     />
                     <p>Time: </p>
                   </div>
-                  <p className="font-bold">{eachTime?.time}</p>
+                  <p className="font-bold">{currentTime?.time}</p>
                 </div>
                 <div className="w-full flex items-center px-2 py-1 mb-2 md:p-2 border-2 border-blue-400/50 rounded-md md:mr-4">
                   <div className="mr-auto flex items-center">
@@ -490,8 +431,8 @@ const Summary = () => {
                   <p className="font-bold">
                     NGN
                     {detailsForm?.seats
-                      ? eachTime?.price * detailsForm?.seats
-                      : eachTime?.price}
+                      ? currentTime?.price * detailsForm?.seats
+                      : currentTime?.price}
                   </p>
                 </div>
                 {/* // ) : (

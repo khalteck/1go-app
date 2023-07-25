@@ -34,7 +34,7 @@ function App() {
         {userDetails?.auth_token ? (
           <>
             <Route path="/book-ride" element={<BookRides />} />
-            <Route path="/book-ride/summary/:id" element={<Summary />} />
+            <Route path="/book-ride/summary/:_id" element={<Summary />} />
             <Route path="/booking-success" element={<BookingSuccess />} />
             <Route path="/ride-history/:id" element={<RideDetails />} />
           </>

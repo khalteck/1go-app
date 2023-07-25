@@ -6,10 +6,21 @@ import ContactMessage from "../components/ContactMessage";
 import Loader from "../components/Loader";
 import { useState } from "react";
 import RideHistoryAdmin from "../components/RideHistoryAdmin";
+import { useEffect } from "react";
 
 const AdminDashboard = () => {
-  const { allUsers, allRides, ridesToday, messageFromDb, loader } =
-    useAppContext();
+  const {
+    allUsers,
+    allRides,
+    ridesToday,
+    loader,
+    fetchAllUsers,
+    allUsersFromFirebase,
+    fetchAllRides,
+    allRidesFromFrirebase,
+    fetchAllContacts,
+    allContacts,
+  } = useAppContext();
 
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchField, setSearchField] = useState("");
@@ -19,13 +30,19 @@ const AdminDashboard = () => {
     setSearchField("");
   };
 
-  const filteredItems = ridesToday.filter((item) => {
-    return item.time.includes(searchField);
+  const filteredItems = allRides?.filter((item) => {
+    return item?.time.includes(searchField);
   });
 
   const handleChange = (event) => {
     setSearchField(event.target.value);
   };
+
+  useEffect(() => {
+    fetchAllUsers();
+    fetchAllRides();
+    fetchAllContacts();
+  }, []);
 
   return (
     <div className="w-full">
@@ -47,7 +64,10 @@ const AdminDashboard = () => {
               </div>
               <div>
                 <h3 className="text-[0.9rem] md:text-[1.2rem]">Total users</h3>
-                <h3 className="font-bold text-[1.5rem]">{allUsers.length}</h3>
+                <h3 className="font-bold text-[1.5rem]">{allUsers?.length}</h3>
+                <div className="font-medium text-[.85rem]">
+                  Firebase users: {allUsersFromFirebase?.length}
+                </div>
               </div>
             </div>
           </div>
@@ -66,12 +86,9 @@ const AdminDashboard = () => {
                   Total bookings
                 </h3>
                 <h3 className="font-bold text-[1.5rem]">{allRides?.length}</h3>
-              </div>
-              <div className="border-l border-sky-500 pl-3">
-                <h3 className="text-[0.9rem] md:text-[1.2rem]">Total today</h3>
-                <h3 className="font-bold text-[1.5rem]">
-                  {ridesToday?.length}
-                </h3>
+                <div className="font-medium text-[.85rem]">
+                  Firebase rides: {allRidesFromFrirebase?.length}
+                </div>
               </div>
             </div>
           </div>
@@ -79,7 +96,7 @@ const AdminDashboard = () => {
         <div className="p-3 bg-white rounded-lg shadow-xl shadow-slate-300/30 border border-sky-500 mt-8 transition-all duration-300">
           <div className="w-full flex border-b border-slate-300 pb-2 mb-4">
             <h3 className="text-[1.1rem] font-medium mr-auto">
-              Booking history today
+              Booking history
             </h3>
             <div className="flex gap-3 flex-col-reverse items-end sm:flex-row">
               {searchOpen && (
@@ -107,8 +124,8 @@ const AdminDashboard = () => {
           </div>
 
           {!searchField &&
-            (ridesToday.length > 0 ? (
-              ridesToday?.map((item, index) => {
+            (allRides?.length > 0 ? (
+              allRides?.map((item, index) => {
                 return (
                   <RideHistoryAdmin item={item} index={index} key={index} />
                 );
@@ -131,7 +148,7 @@ const AdminDashboard = () => {
               <h2 className="w-fit mx-auto mb-4 border-b border-slate-300">
                 Search results for "{searchField}"
               </h2>
-              {filteredItems.length > 0 ? (
+              {filteredItems?.length > 0 ? (
                 filteredItems?.map((item, index) => {
                   return (
                     <div key={index} className="w-full">
@@ -168,8 +185,8 @@ const AdminDashboard = () => {
             Contact Us messages
           </h3>
 
-          {messageFromDb.length > 0 ? (
-            messageFromDb?.map((item, index) => {
+          {allContacts.length > 0 ? (
+            allContacts?.map((item, index) => {
               return <ContactMessage key={index} item={item} />;
             })
           ) : (

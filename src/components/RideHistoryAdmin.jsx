@@ -17,7 +17,7 @@ const RideHistoryAdmin = ({ item }) => {
         </div>
         <div className="flex items-center px-2 py-1 md:p-2 border-2 border-slate-400/50 rounded-md md:mr-4">
           <p>
-            Booking Code: <strong>{item?.bookingCode}</strong>
+            Booking Code: <strong>{item?.booking_code}</strong>
           </p>
         </div>
         <div className="flex items-center px-2 py-1 md:p-2 border-2 border-slate-400/50 rounded-md md:mr-4">
@@ -27,7 +27,7 @@ const RideHistoryAdmin = ({ item }) => {
         </div>
         <div className="flex items-center px-2 py-1 md:p-2 border-2 border-slate-400/50 rounded-md mr-auto">
           <p>
-            Seats: <strong>{item?.seats}</strong>
+            Seats: <strong>{item?.seat}</strong>
           </p>
         </div>
         <div className="flex items-center px-2 py-1 md:p-2 border-2 border-slate-400/50 rounded-md">

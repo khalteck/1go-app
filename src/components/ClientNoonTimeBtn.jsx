@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useAppContext } from "../contexts/AppContext";
 
 const ClientNoonTimeBtn = ({ item }) => {
-  const { user, navigate } = useAppContext();
+  const { userDetails, navigate } = useAppContext();
 
   let t = new Date();
   let time = t.toLocaleString("en-US", {
@@ -24,11 +24,19 @@ const ClientNoonTimeBtn = ({ item }) => {
   const [timePassed, setTimePassed] = useState(false);
 
   function link() {
-    if (user && item.slots > 0 && currentTimeRef < compareTimeRef) {
-      navigate(`/book-ride/summary/${item.id}`);
-    } else if (user && item.slots > 0 && currentTimeRef > compareTimeRef) {
+    if (
+      userDetails?.auth_token &&
+      item.slots > 0 &&
+      currentTimeRef < compareTimeRef
+    ) {
+      navigate(`/book-ride/summary/${item._id}`);
+    } else if (
+      userDetails &&
+      item.slots > 0 &&
+      currentTimeRef > compareTimeRef
+    ) {
       setTimePassed(true);
-    } else if (user && item.slots < 1) {
+    } else if (userDetails && item.slots < 1) {
       setBookedOut(true);
     } else {
       navigate("/login");
