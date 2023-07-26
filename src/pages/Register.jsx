@@ -50,10 +50,10 @@ const Register = () => {
               <div className="font-light space-y-4 mt-6 pb-6 w-full h-full rounded-lg sm:mt-4">
                 {/* first name */}
                 <div>
-                  <label htmlFor="firstname">First name</label>
+                  <label htmlFor="first_name">First name</label>
                   <input
                     className="reg-input"
-                    id="firstname"
+                    id="first_name"
                     onChange={handleRegChange}
                     placeholder="Enter your first name"
                     type="text"
@@ -62,10 +62,10 @@ const Register = () => {
                 </div>
                 {/* last name */}
                 <div>
-                  <label htmlFor="lastname">Last name</label>
+                  <label htmlFor="last_name">Last name</label>
                   <input
                     className="reg-input"
-                    id="lastname"
+                    id="last_name"
                     onChange={handleRegChange}
                     placeholder="Enter your last name"
                     required

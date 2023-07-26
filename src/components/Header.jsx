@@ -12,7 +12,6 @@ const Header = () => {
     toggleLogoutOn,
     toggleLogoutOff,
     showLogout,
-    currentUserFromDb,
     accessDashboard,
     userNotLoggedIn,
   } = useAppContext();
@@ -118,7 +117,7 @@ const Header = () => {
               >
                 <div>
                   {userDetails?.first_name ? (
-                    userDetails
+                    userDetails?.first_name
                   ) : (
                     <div className="w-[25px] h-[25px] bg-gradient-to-b from-blue-500 to-white rounded-full relative rotate">
                       {/* <div className="w-1/3 h-full bg-white"></div> */}
@@ -215,7 +214,7 @@ const Header = () => {
                     className="w-6 h-6"
                   />
 
-                  <p>{currentUserFromDb?.firstname}</p>
+                  <p>{userDetails?.first_name}</p>
                 </li>
               )}
               <li className="my-4">

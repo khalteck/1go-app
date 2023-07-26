@@ -36,8 +36,8 @@ const AppContextProvider = ({ children }) => {
 
   //to save reg form input
   const [regForm, setRegForm] = useState({
-    firstname: "",
-    lastname: "",
+    first_name: "",
+    last_name: "",
     email: "",
     phone: "",
     password: "",
@@ -308,6 +308,7 @@ const AppContextProvider = ({ children }) => {
   const [rideHistory, setrideHistory] = useState([]);
   const fetchRideHistory = async () => {
     setLoader(true);
+    // console.log(userDetails?.auth_token);
 
     try {
       const endpointURL =
@@ -1152,9 +1153,14 @@ const AppContextProvider = ({ children }) => {
     try {
       const endpointURL =
         "https://onegoexploreapp.onrender.com/api/auth/verify-payment";
-      const response = await axios.post(endpointURL, data);
-      setBookingSuccess(true);
 
+      const response = await axios.post(endpointURL, data, {
+        headers: {
+          Authorization: `Bearer ${userDetails?.auth_token}`,
+        },
+      });
+
+      setBookingSuccess(true);
       console.log("Payment verified successfully!", response.data);
     } catch (error) {
       console.error("Error verifying payment!", error);
