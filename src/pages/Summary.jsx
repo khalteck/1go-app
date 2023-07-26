@@ -112,7 +112,7 @@ const Summary = () => {
     };
 
     verifyPayment(data);
-    navigate("/book-ride");
+    // navigate("/book-ride");
   };
   const onClose = () => {
     alert("Transaction was not completed, window closed.");
@@ -469,6 +469,10 @@ const Summary = () => {
       </section>
       <Footer />
       <ScrollToTop />
+
+      {bookingSuccess && (
+        <BookSuccessModal currentTime={currentTime} detailsForm={detailsForm} />
+      )}
       {/* {freeRideBanner && (
         <div className="w-full bg-white px-2 md:px-5 py-[6px] md:py-3 fixed bottom-0 left-0 flex items-center z-10">
           <div className="flex items-center gap-2 md:gap-4 mr-auto">

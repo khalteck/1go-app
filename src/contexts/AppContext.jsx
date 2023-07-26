@@ -93,6 +93,8 @@ const AppContextProvider = ({ children }) => {
   }
 
   const [loader, setLoader] = useState(false);
+  const [inlineLoader, setinlineLoader] = useState(false);
+
   const navigate = useNavigate();
 
   // function to create user doc on sign up
@@ -221,7 +223,7 @@ const AppContextProvider = ({ children }) => {
         "https://onegoexploreapp.onrender.com/api/login",
         loginForm
       );
-      // console.log("Login successful!", response.data);
+      console.log("Login successful!", response.data);
       localStorage.setItem("userDetails", JSON.stringify(response.data));
       setUserDetails(response.data);
       navigate("/book-ride");
@@ -307,15 +309,15 @@ const AppContextProvider = ({ children }) => {
   //======================================================================to get current users ride hitory
   const [rideHistory, setrideHistory] = useState([]);
   const fetchRideHistory = async () => {
-    setLoader(true);
-    // console.log(userDetails?.auth_token);
+    setinlineLoader(true);
+    // console.log(userDetails?.token);
 
     try {
       const endpointURL =
         "https://onegoexploreapp.onrender.com/api/auth/all-ride";
 
       const headers = {
-        Authorization: `Bearer ${userDetails?.auth_token}`,
+        Authorization: `Bearer ${userDetails?.token}`,
       };
 
       const response = await axios.get(endpointURL, { headers });
@@ -324,7 +326,7 @@ const AppContextProvider = ({ children }) => {
     } catch (error) {
       console.error("Fetching ride history failed!", error);
     } finally {
-      setLoader(false);
+      setinlineLoader(false);
     }
   };
 
@@ -385,7 +387,7 @@ const AppContextProvider = ({ children }) => {
   const [userNotLoggedIn, setuserNotLoggedIn] = useState(false);
   function accessDashboard() {
     setuserNotLoggedIn(true);
-    if (userDetails?.auth_token) {
+    if (userDetails?.token) {
       navigate("/book-ride");
       setuserNotLoggedIn(false);
     } else {
@@ -815,7 +817,7 @@ const AppContextProvider = ({ children }) => {
   // const [ridesToday, setridesToday] = useState([]);
 
   // useEffect(() => {
-  //   if (userDetails?.auth_token) {
+  //   if (userDetails?.token) {
   //     const getRidesToday = async () => {
   //       // setLoader(true);
   //       const userQuery = query(
@@ -1156,7 +1158,7 @@ const AppContextProvider = ({ children }) => {
 
       const response = await axios.post(endpointURL, data, {
         headers: {
-          Authorization: `Bearer ${userDetails?.auth_token}`,
+          Authorization: `Bearer ${userDetails?.token}`,
         },
       });
 
@@ -1250,8 +1252,8 @@ const AppContextProvider = ({ children }) => {
         fetchAllContacts,
         fetchRideHistory,
         rideHistory,
-        setErrorMessage,
         verifyPayment,
+        inlineLoader,
       }}
     >
       {children}

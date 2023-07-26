@@ -89,7 +89,7 @@ const Header = () => {
             >
               Contact
             </Link>
-            {!userDetails?.auth_token && (
+            {!userDetails?.token && (
               <Link
                 to="/login"
                 className={`cursor-pointer px-2 py-1 ${
@@ -99,7 +99,7 @@ const Header = () => {
                 Login
               </Link>
             )}
-            {!userDetails?.auth_token && (
+            {!userDetails?.token && (
               <Link
                 to="/register"
                 className={`cursor-pointer px-2 py-1 ${
@@ -110,7 +110,7 @@ const Header = () => {
               </Link>
             )}
 
-            {userDetails?.auth_token && (
+            {userDetails?.token && (
               <div
                 onMouseOver={toggleLogoutOn}
                 className={`cursor-pointer px-2 py-1 rounded-md flex items-center gap-2 border-2 border-blue-500 hover:bg-blue-500/50 hover:translate-y-[6px] transition-all duration-300 relative`}

@@ -31,7 +31,7 @@ function App() {
         <Route path="/register" element={<Register />} />
 
         {/* dashboard controlled access */}
-        {userDetails?.auth_token ? (
+        {userDetails?.token ? (
           <>
             <Route path="/book-ride" element={<BookRides />} />
             <Route path="/book-ride/summary/:_id" element={<Summary />} />

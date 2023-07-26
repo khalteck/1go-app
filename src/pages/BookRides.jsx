@@ -1,6 +1,7 @@
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { PulseLoader } from "react-spinners";
 import ActiveBooking from "../components/ActiveBooking";
 import BookSuccessModal from "../components/BookSuccessModal";
 import ClientMorningTimeBtn from "../components/ClientMorningTimeBtn";
@@ -32,6 +33,8 @@ const BookRides = () => {
     fetchBookingTimes,
     allBookingTimes,
     fetchRideHistory,
+    inlineLoader,
+    rideHistory,
   } = useAppContext();
 
   let firstFive = rideHistoryFromDb?.slice(0, 5);
@@ -208,17 +211,43 @@ const BookRides = () => {
           <section className="w-full mt-10 px-[5%] sm:px-[10.5%]">
             <div className="text-[1rem] md:text-[1.5rem] font-medium w-[fit-content] bg-white py-2 px-5 rounded-t-lg border-none relative bottom-[-2px] flex items-center gap-2">
               <h2>Successful bookings</h2>
-              {rideHistoryFromDb?.length > 0 && (
+              {rideHistory?.length > 0 && (
                 <div className="w-4 h-4 p-[10px] text-[.85rem] flex justify-center items-center border-2 border-slate-400/50 rounded-full">
-                  {rideHistoryFromDb?.length}
+                  {rideHistory?.length}
                 </div>
               )}
             </div>
             <div className="w-full min-h-[200px] bg-white rounded-b-lg p-4 flex flex-col items-center transition-all duration-300">
               {/* each ride history */}
+              {rideHistory?.map((item, index) => {
+                return (
+                  <RideHistory
+                    key={index}
+                    item={item}
+                    rideHistoryFromDb={rideHistoryFromDb}
+                  />
+                );
+              })}
+
+              {rideHistory?.length === 0 && !inlineLoader && (
+                <div className="w-full py-12 bg-sky-50 flex flex-col items-center">
+                  <img
+                    alt=""
+                    src="/images/empty.png"
+                    className="w-20 h-20 mb-8"
+                  />
+                  <p className="text-slate-400">No bookings yet...</p>
+                </div>
+              )}
+
+              {inlineLoader && (
+                <div className="w-full py-12 bg-sky-50 flex flex-col items-center">
+                  <PulseLoader color="#3b82f6" size={20} />
+                </div>
+              )}
 
               {/* Paginate this */}
-              {rideHistoryFromDb?.length > 0 && !displayAll ? (
+              {/* {rideHistoryFromDb?.length > 0 && !displayAll ? (
                 firstFive?.map((item, index) => {
                   return (
                     <RideHistory
@@ -247,7 +276,7 @@ const BookRides = () => {
                   />
                   <p className="text-slate-400">No bookings yet...</p>
                 </div>
-              )}
+              )} */}
 
               {rideHistoryFromDb?.length > 5 && (
                 <button

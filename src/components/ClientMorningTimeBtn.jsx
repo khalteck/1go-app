@@ -27,7 +27,7 @@ const ClientMorningTimeBtn = ({ item }) => {
 
   function link() {
     if (
-      userDetails?.auth_token &&
+      userDetails?.token &&
       item?.slot > 0 &&
       currentTimeNRef < compareTimeNRef
     ) {
