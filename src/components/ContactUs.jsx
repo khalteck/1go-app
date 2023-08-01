@@ -10,7 +10,24 @@ function ContactUs() {
     sent,
     errorMessage,
     contactUsData,
+    setErrorMessage,
   } = useAppContext();
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    console.log("data", contactUsData);
+    if (
+      contactUsData.first_name &&
+      contactUsData.last_name &&
+      contactUsData.email &&
+      contactUsData.phone &&
+      contactUsData.message
+    ) {
+      await handleSubmitContactUs();
+    } else {
+      setErrorMessage("Please fill all fields!");
+    }
+  }
   return (
     <div className="overlay bg-[#020d18]/80 h-full w-full block lg:flex items-center justify-between text-[1rem] lg:px-[50px] py-[80px]">
       <div className="w-[90%] mx-auto lg:w-[50%] text-center text-slate-100">
@@ -27,27 +44,27 @@ function ContactUs() {
         <form className="space-y-6 font-light">
           <div className="flex space-x-4">
             <input
-              id="fname"
+              id="first_name"
               onChange={handleContactUsChange}
-              value={contactUsData.fname}
+              value={contactUsData.first_name}
               type="text"
               placeholder="First Name"
               className={`${
-                !errorMessage
-                  ? "border-blue-500"
-                  : "border-red-400 bg-red-400/30"
+                errorMessage && !contactUsData.first_name
+                  ? "border-red-400 bg-red-400/30"
+                  : "border-blue-500"
               } w-full px-4 py-3 bg-transparent text-white border-2 rounded-lg focus:outline-none`}
             />
             <input
-              id="lname"
+              id="last_name"
               onChange={handleContactUsChange}
-              value={contactUsData.lname}
+              value={contactUsData.last_name}
               type="text"
               placeholder="Last Name"
               className={`${
-                !errorMessage
-                  ? "border-blue-500"
-                  : "border-red-400 bg-red-400/30"
+                errorMessage && !contactUsData.last_name
+                  ? "border-red-400 bg-red-400/30"
+                  : "border-blue-500"
               } w-full px-4 py-3 bg-transparent text-white border-2 rounded-lg focus:outline-none`}
             />
           </div>
@@ -59,9 +76,9 @@ function ContactUs() {
               type="email"
               placeholder="Email Address"
               className={`${
-                !errorMessage
-                  ? "border-blue-500"
-                  : "border-red-400 bg-red-400/30"
+                errorMessage && !contactUsData.email
+                  ? "border-red-400 bg-red-400/30"
+                  : "border-blue-500"
               } w-full px-4 py-3 bg-transparent text-white border-2 rounded-lg focus:outline-none`}
             />
             <input
@@ -71,9 +88,9 @@ function ContactUs() {
               type="number"
               placeholder="Phone Number"
               className={`${
-                !errorMessage
-                  ? "border-blue-500"
-                  : "border-red-400 bg-red-400/30"
+                errorMessage && !contactUsData.phone
+                  ? "border-red-400 bg-red-400/30"
+                  : "border-blue-500"
               } w-full px-4 py-3 bg-transparent text-white border-2 rounded-lg focus:outline-none`}
             />
           </div>
@@ -86,7 +103,7 @@ function ContactUs() {
             className="h-[150px] px-4 py-3 bg-transparent text-white border-2 border-blue-500 rounded-lg focus:outline-none w-full"
           ></textarea>
           <button
-            onClick={handleSubmitContactUs}
+            onClick={handleSubmit}
             className="bg-blue-500 text-white py-4 w-full rounded-lg flex justify-center items-center"
           >
             {sendingContact ? (

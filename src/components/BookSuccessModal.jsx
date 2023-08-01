@@ -1,6 +1,6 @@
 import { useAppContext } from "../contexts/AppContext";
 
-const BookSuccessModal = ({ eachTime, detailsForm }) => {
+const BookSuccessModal = ({ currentTime, detailsForm }) => {
   const { cloaseSuccessModal } = useAppContext();
   return (
     <div className="w-full h-[100vh] py-16 px-4 md:px-8 fixed top-0 left-0 bg-blue-50 flex justify-center z-[100] overflow-auto">
@@ -20,7 +20,7 @@ const BookSuccessModal = ({ eachTime, detailsForm }) => {
                 <br /> Please proceed promptly to the{" "}
                 <span className="font-bold">{detailsForm?.terminal}</span> , as
                 your bus will depart school park at{" "}
-                <span className="font-bold">{eachTime?.time}</span>
+                <span className="font-bold">{currentTime?.time}</span>
               </p>
             )}
 
@@ -32,7 +32,7 @@ const BookSuccessModal = ({ eachTime, detailsForm }) => {
                 <br /> Please proceed promptly to your pickup terminal -{" "}
                 <span className="font-bold">{detailsForm?.terminal}</span> , as
                 your bus will depart terminus at{" "}
-                <span className="font-bold">{eachTime?.time}</span>
+                <span className="font-bold">{currentTime?.time}</span>
               </p>
             )}
           </div>

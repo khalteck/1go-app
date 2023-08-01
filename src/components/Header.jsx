@@ -12,7 +12,6 @@ const Header = () => {
     toggleLogoutOn,
     toggleLogoutOff,
     showLogout,
-    currentUserFromDb,
     accessDashboard,
     userNotLoggedIn,
   } = useAppContext();
@@ -90,7 +89,7 @@ const Header = () => {
             >
               Contact
             </Link>
-            {!userDetails?.auth_token && (
+            {!userDetails?.token && (
               <Link
                 to="/login"
                 className={`cursor-pointer px-2 py-1 ${
@@ -100,7 +99,7 @@ const Header = () => {
                 Login
               </Link>
             )}
-            {!userDetails?.auth_token && (
+            {!userDetails?.token && (
               <Link
                 to="/register"
                 className={`cursor-pointer px-2 py-1 ${
@@ -111,14 +110,14 @@ const Header = () => {
               </Link>
             )}
 
-            {userDetails?.auth_token && (
+            {userDetails?.token && (
               <div
                 onMouseOver={toggleLogoutOn}
                 className={`cursor-pointer px-2 py-1 rounded-md flex items-center gap-2 border-2 border-blue-500 hover:bg-blue-500/50 hover:translate-y-[6px] transition-all duration-300 relative`}
               >
                 <div>
                   {userDetails?.first_name ? (
-                    userDetails
+                    userDetails?.first_name
                   ) : (
                     <div className="w-[25px] h-[25px] bg-gradient-to-b from-blue-500 to-white rounded-full relative rotate">
                       {/* <div className="w-1/3 h-full bg-white"></div> */}
@@ -215,7 +214,7 @@ const Header = () => {
                     className="w-6 h-6"
                   />
 
-                  <p>{currentUserFromDb?.firstname}</p>
+                  <p>{userDetails?.first_name}</p>
                 </li>
               )}
               <li className="my-4">
