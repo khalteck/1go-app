@@ -4,15 +4,15 @@ import ScrollToTop from "../ScrollToTop";
 import { Link, useParams } from "react-router-dom";
 import { useAppContext } from "../contexts/AppContext";
 import { usePaystackPayment } from "react-paystack";
-import {
-  collection,
-  query,
-  where,
-  updateDoc,
-  doc,
-  getDoc,
-} from "firebase/firestore";
-import { db } from "../firebase/firebase-config";
+// import {
+//   collection,
+//   query,
+//   where,
+//   updateDoc,
+//   doc,
+//   getDoc,
+// } from "firebase/firestore";
+// import { db } from "../firebase/firebase-config";
 import { useState } from "react";
 import Loader from "../components/Loader";
 import BookSuccessModal from "../components/BookSuccessModal";
@@ -20,26 +20,13 @@ import { useEffect } from "react";
 
 const Summary = () => {
   const {
-    // morningBookingTimesFromDb,
-    // noonBookingTimesFromDb,
     loader,
     userDetails,
-    setActiveRideChange,
-    setBookingSuccess,
-    navigate,
-    createRideDoc,
     formattedDate,
     setLoader,
-    createdAt,
-    ridesToday,
-    freeRideBanner,
-    cancelBookFreeRide,
-    bookFreeRide,
     bookingSuccess,
     allBookingTimes,
-    fetchBookingTimes,
     verifyPayment,
-    // freeRideCount,
   } = useAppContext();
 
   // useEffect(() => {
@@ -58,7 +45,7 @@ const Summary = () => {
 
   const { _id } = useParams();
   const currentTime = allTimes?.filter((item) => item._id === _id)[0];
-  // console.log(currentTime);
+  // console.log(allBookingTimes);
 
   //to control details form
   const [detailsError, setDetailsError] = useState("");
@@ -92,39 +79,34 @@ const Summary = () => {
   //to init paystack
   const initializePayment = usePaystackPayment(paystackConfig);
 
+  //to dynamically get ride_path
+  const ride_path =
+    toCampusTimes?.filter((item) => item?._id === currentTime?._id)?.length > 0
+      ? "to_campus"
+      : offCampusTimes?.filter((item) => item?._id === currentTime?._id)
+          ?.length > 0
+      ? "off_campus"
+      : null;
+
   //paystack functions
   const onSuccess = (transaction) => {
     console.log("transaction", transaction);
     setLoader(true);
 
     const data = {
+      ride_path: ride_path,
       price: detailsForm?.seats
         ? `${currentTime?.price * detailsForm?.seats}`
         : `${currentTime?.price}`,
       time: currentTime?.time,
       terminal: detailsForm?.terminal,
       slot: Number(detailsForm?.seats),
-      payment_ref: {
-        reference: transaction?.reference,
-        message: transaction?.message,
-        status: transaction?.status,
-      },
+      reference: "default", //transaction?.reference,
+      message: "approved", //transaction?.message,
+      status: "success", //transaction?.status,
     };
 
-    // const test = {
-    //   price: "200",
-    //   time: "12.20am",
-    //   terminal: "tanke-junction",
-    //   slot: 23,
-    //   ride_path: "to_campus",
-    //   payment_ref: {
-    //     reference: "default",
-    //     message: "approved",
-    //     status: "success",
-    //   },
-    // };
-
-    verifyPayment();
+    verifyPayment(data);
     // navigate("/book-ride");
   };
   const onClose = () => {

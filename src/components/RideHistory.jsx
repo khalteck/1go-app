@@ -3,14 +3,14 @@ import { useAppContext } from "../contexts/AppContext";
 const RideHistory = ({ item }) => {
   const { navigate, formattedDate } = useAppContext();
   function link() {
-    navigate(`/ride-history/${item.id}`);
+    navigate(`/ride-history/${item._id}`);
   }
 
   return (
     <>
       <div
         onClick={link}
-        className="w-full p-3 mb-4 bg-blue-400/10 text-[0.85rem] md:text-[0.7rem] lg:text-[.9rem] rounded-md hidden md:flex flex-wrap md:flex-nowrap transition-all duration-300"
+        className="w-full p-3 mb-4 bg-blue-400/10 text-[0.85rem] md:text-[0.7rem] lg:text-[.9rem] rounded-md hidden md:flex flex-wrap md:flex-nowrap transition-all duration-300 cursor-pointer"
       >
         <div className="flex items-center px-2 py-1 md:p-2 border-2 border-blue-400/50 rounded-md md:mr-4">
           <p>
@@ -27,7 +27,7 @@ const RideHistory = ({ item }) => {
         </div>
         <div className="flex items-center px-2 py-1 md:p-2 border-2 border-blue-400/50 rounded-md md:mr-4">
           <p>
-            Booking Code: <strong>{item?.bookingCode}</strong>
+            Booking Code: <strong>{item?.booking_code}</strong>
           </p>
         </div>
         <div className="flex items-center px-2 py-1 md:p-2 border-2 border-blue-400/50 rounded-md md:mr-4">

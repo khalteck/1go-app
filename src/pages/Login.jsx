@@ -16,13 +16,13 @@ const Login = () => {
     errorMessage,
     userNotLoggedIn,
     handleResetpswChange,
-    forgotpswSubmit,
+    // forgotpswSubmit,
   } = useAppContext();
 
-  const [forgotpsw, setForgotpsw] = useState(false);
-  const handleForgotPsw = () => {
-    setForgotpsw((prev) => !prev);
-  };
+  // const [forgotpsw, setForgotpsw] = useState(false);
+  // const handleForgotPsw = () => {
+  //   setForgotpsw((prev) => !prev);
+  // };
 
   return (
     <>
@@ -94,7 +94,7 @@ const Login = () => {
                   </div>
 
                   <a
-                    onClick={handleForgotPsw}
+                    // onClick={handleForgotPsw}
                     className="text-blue-500 font-light cursor-pointer"
                   >
                     Forgot password?
@@ -145,7 +145,7 @@ const Login = () => {
           </div>
         </div>
 
-        {forgotpsw && (
+        {/* {forgotpsw && (
           <div className="w-full px-4 min-h-screen bg-slate-600/90 fixed left-0 top-0 z-[100] flex items-center">
             <div
               onClick={handleForgotPsw}
@@ -183,7 +183,7 @@ const Login = () => {
                 )}
                 <div>
                   <button
-                    onClick={forgotpswSubmit}
+                    // onClick={forgotpswSubmit}
                     className="text-white bg-blue-500 login-input mt4 mb-3 border-transparent hover:opacity-80"
                   >
                     Send password reset link
@@ -192,7 +192,7 @@ const Login = () => {
               </div>
             </form>
           </div>
-        )}
+        )} */}
       </section>
       <Footer />
       <ScrollToTop />

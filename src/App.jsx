@@ -36,7 +36,7 @@ function App() {
             <Route path="/book-ride" element={<BookRides />} />
             <Route path="/book-ride/summary/:_id" element={<Summary />} />
             <Route path="/booking-success" element={<BookingSuccess />} />
-            <Route path="/ride-history/:id" element={<RideDetails />} />
+            <Route path="/ride-history/:_id" element={<RideDetails />} />
           </>
         ) : (
           <Route path="/login" element={<Login />} />
