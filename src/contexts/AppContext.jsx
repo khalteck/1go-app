@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
 import axios from "axios";
+import qs from "qs";
 
 import {
   createUserWithEmailAndPassword,
@@ -317,14 +318,14 @@ const AppContextProvider = ({ children }) => {
         "https://onegoexploreapp.onrender.com/api/auth/all-ride";
 
       const headers = {
-        Authorization: `Bearer ${userDetails?.token}`,
+        Authorization: `${userDetails?.token}`,
       };
 
       const response = await axios.get(endpointURL, { headers });
       console.log("Ride history fetched successfully!", response.data.response);
       setrideHistory(response.data.response);
     } catch (error) {
-      console.error("Fetching ride history failed!", error);
+      console.error("Error fetching ride history!", error);
     } finally {
       setinlineLoader(false);
     }
@@ -1148,7 +1149,18 @@ const AppContextProvider = ({ children }) => {
   }
 
   //======================================================================to verify payment
-  const verifyPayment = async (data) => {
+  const data = {
+    price: "500",
+    time: "8.20am",
+    terminal: "sanrab",
+    slot: 3,
+    ride_path: "to_campus",
+    reference: "default",
+    message: "approved",
+    status: "success",
+  };
+
+  const verifyPayment = async () => {
     setLoader(true);
     console.log("data", data);
 
@@ -1156,9 +1168,10 @@ const AppContextProvider = ({ children }) => {
       const endpointURL =
         "https://onegoexploreapp.onrender.com/api/auth/verify-payment";
 
-      const response = await axios.post(endpointURL, data, {
+      const response = await axios.post(endpointURL, JSON.stringify(data), {
         headers: {
-          Authorization: `Bearer ${userDetails?.token}`,
+          Authorization: `${userDetails?.token}`,
+          "Content-Type": "application/json", // Set Content-Type to JSON
         },
       });
 
@@ -1170,6 +1183,30 @@ const AppContextProvider = ({ children }) => {
       setLoader(false);
     }
   };
+
+  // const verifyPayment = async (data) => {
+  //   setLoader(true);
+  //   console.log("data", data);
+
+  //   try {
+  //     const endpointURL =
+  //       "https://onegoexploreapp.onrender.com/api/auth/verify-payment";
+
+  //     const response = await axios.post(endpointURL, data, {
+  //       headers: {
+  //         Authorization: `${userDetails?.token}`,
+  //         "Content-Type": "application/json", // Set Content-Type to JSON
+  //       },
+  //     });
+
+  //     setBookingSuccess(true);
+  //     console.log("Payment verified successfully!", response.data);
+  //   } catch (error) {
+  //     console.error("Error verifying payment!", error);
+  //   } finally {
+  //     setLoader(false);
+  //   }
+  // };
 
   return (
     <AppContext.Provider

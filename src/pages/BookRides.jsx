@@ -47,7 +47,7 @@ const BookRides = () => {
 
   useEffect(() => {
     fetchBookingTimes();
-    fetchRideHistory();
+    // fetchRideHistory();
   }, []);
 
   const toCampusTimes = allBookingTimes?.to_campus;

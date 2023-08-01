@@ -42,9 +42,9 @@ const Summary = () => {
     // freeRideCount,
   } = useAppContext();
 
-  useEffect(() => {
-    fetchBookingTimes();
-  }, []);
+  // useEffect(() => {
+  //   fetchBookingTimes();
+  // }, []);
 
   const toCampusTimes = allBookingTimes?.to_campus || [];
   const offCampusTimes = allBookingTimes?.off_campus || [];
@@ -98,9 +98,9 @@ const Summary = () => {
     setLoader(true);
 
     const data = {
-      price: `${detailsForm?.seats}`
-        ? currentTime?.price * detailsForm?.seats
-        : currentTime?.price,
+      price: detailsForm?.seats
+        ? `${currentTime?.price * detailsForm?.seats}`
+        : `${currentTime?.price}`,
       time: currentTime?.time,
       terminal: detailsForm?.terminal,
       slot: Number(detailsForm?.seats),
@@ -111,7 +111,20 @@ const Summary = () => {
       },
     };
 
-    verifyPayment(data);
+    // const test = {
+    //   price: "200",
+    //   time: "12.20am",
+    //   terminal: "tanke-junction",
+    //   slot: 23,
+    //   ride_path: "to_campus",
+    //   payment_ref: {
+    //     reference: "default",
+    //     message: "approved",
+    //     status: "success",
+    //   },
+    // };
+
+    verifyPayment();
     // navigate("/book-ride");
   };
   const onClose = () => {
